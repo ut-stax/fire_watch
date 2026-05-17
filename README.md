@@ -64,6 +64,10 @@ A browser-based Security Information & Event Management (SIEM) dashboard built w
    - Enable Google Sign-In
    - Enable Email/Password provider
 4. Add a web app to get your Firebase config object
+5. Deploy Firestore rules:
+   ```bash
+   firebase deploy --only firestore:rules
+   ```
 
 ## Project Structure
 
@@ -100,6 +104,17 @@ src/
     ├── engine.js         # Correlation engine runner
     └── rules.js          # Detection rules
 ```
+
+## Deployment
+
+1. Install Firebase CLI: `npm install -g firebase-tools`
+2. Login: `firebase login`
+3. Initialize hosting: `firebase init hosting`
+4. Build and deploy:
+   ```bash
+   npm run build
+   firebase deploy
+   ```
 
 ## License
 

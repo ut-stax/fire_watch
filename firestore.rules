@@ -2,18 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Allow authenticated users to read and write to events collection
-    // Validates that required fields are present on write
+    // Events collection - security logs
+    // Validates required fields: source_ip, event_type, severity
     match /events/{document=**} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
         && request.resource.data.source_ip is string
         && request.resource.data.event_type is string
-        && request.resource.data.severity is string;
+        && request.resource.data.severity is string
+        && request.resource.data.message is string;
       allow update, delete: if request.auth != null;
     }
 
-    // Allow authenticated users to read and write to alerts collection
+    // Alerts collection - detected security issues
     match /alerts/{document=**} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
@@ -21,12 +22,6 @@ service cloud.firestore {
         && request.resource.data.severity is string
         && request.resource.data.source_ip is string;
       allow update, delete: if request.auth != null;
-    }
-
-    // Allow authenticated users to read and write to test_connection collection
-    // (used for connectivity testing)
-    match /test_connection/{document=**} {
-      allow read, write: if request.auth != null;
     }
 
     // Block all other access by default
