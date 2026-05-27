@@ -1,8 +1,79 @@
 /* Base styles */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colors (DESIGN.md) */
+  --color-primary: #024ad8;
+  --color-primary-bright: #296ef9;
+  --color-primary-deep: #0e3191;
+  --color-primary-soft: #c9e0fc;
+  --color-on-primary: #ffffff;
+  --color-ink: #1a1a1a;
+  --color-ink-deep: #000000;
+  --color-ink-soft: #292929;
+  --color-on-ink: #ffffff;
+  --color-canvas: #ffffff;
+  --color-paper: #ffffff;
+  --color-cloud: #f7f7f7;
+  --color-fog: #e8e8e8;
+  --color-steel: #c2c2c2;
+  --color-graphite: #636363;
+  --color-charcoal: #3d3d3d;
+  --color-hairline: #e8e8e8;
+  --color-hairline-strong: #c2c2c2;
+  --color-link: var(--color-primary);
+  --color-link-pressed: var(--color-primary-deep);
+  --color-bloom-coral: #ff5050;
+  --color-bloom-rose: #f9d4d2;
+  --color-bloom-deep: #b3262b;
+  --color-bloom-wine: #5a1313;
+  --color-storm-mist: #8ebdce;
+  --color-storm-sea: #7fadbe;
+  --color-storm-deep: #356373;
+  --color-error: #b3262b;
+
+  /* Rounded */
+  --rounded-none: 0px;
+  --rounded-xs: 2px;
+  --rounded-sm: 3px;
+  --rounded-md: 4px;
+  --rounded-lg: 8px;
+  --rounded-xl: 16px;
+  --rounded-pill: 9999px;
+
+  /* Spacing */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-section: 80px;
+
+  /* Typography */
+  --font-family-sans: 'Manrope', Arial, sans-serif;
+  --font-display-weight: 500;
+  --font-body-weight: 400;
+
+  /* Utility tokens used by existing CSS */
+  --accent: var(--color-primary);
+  --accent-bg: var(--color-primary-soft);
+  --accent-border: var(--color-primary-deep);
+  --border: var(--color-hairline);
+  --text-h: var(--color-ink);
+  --social-bg: var(--color-cloud);
+  --shadow: 0 2px 8px rgba(26,26,26,0.08);
+}
+
+/* Base styles */
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: var(--font-family-sans);
+  color: var(--color-ink);
+  background: var(--color-canvas);
 }
 
 /* Scrollbar styling */

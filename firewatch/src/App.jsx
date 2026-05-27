@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import LogExplorer from './pages/LogExplorer';
 import Alerts from './pages/Alerts';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Landing from './pages/Landing';
 import { LogIngestion } from './pages/LogIngestion';
 
 function App() {
@@ -20,9 +22,12 @@ function App() {
         <Router>
           <Layout>
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
               <Route
-                path="/"
+                path="/app"
                 element={
                   <ProtectedRoute>
                     <ErrorBoundary>
@@ -32,7 +37,7 @@ function App() {
                 }
               />
               <Route
-                path="/logs"
+                path="/app/logs"
                 element={
                   <ProtectedRoute>
                     <ErrorBoundary>
@@ -42,7 +47,7 @@ function App() {
                 }
               />
               <Route
-                path="/alerts"
+                path="/app/alerts"
                 element={
                   <ProtectedRoute>
                     <ErrorBoundary>
@@ -52,7 +57,7 @@ function App() {
                 }
               />
               <Route
-                path="/ingest"
+                path="/app/ingest"
                 element={
                   <ProtectedRoute>
                     <ErrorBoundary>

@@ -64,13 +64,29 @@ export default function Dashboard() {
 
   return (
     <Box>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h3" gutterBottom>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Real-time security event monitoring and analysis
-        </Typography>
+      <Paper sx={{ p: 4, mb: 3, borderRadius: 3, bgcolor: 'primary.soft', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 3, position: 'relative', overflow: 'visible' }}>
+        <Box sx={{ position: 'absolute', left: -40, top: 12, display: { xs: 'none', md: 'block' } }}>
+          <img src="/assets/chevron-left.svg" alt="" style={{ height: 140, opacity: 0.95 }} />
+        </Box>
+        <Box sx={{ position: 'absolute', right: -40, bottom: 12, display: { xs: 'none', md: 'block' } }}>
+          <img src="/assets/chevron-right.svg" alt="" style={{ height: 140, opacity: 0.95 }} />
+        </Box>
+        <Box>
+          <Typography variant="h3" gutterBottom fontWeight={700} color="text.primary">
+            Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Real-time security event monitoring and analysis
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button component={Link} to="/app/ingest" variant="contained" size="large">
+            Ingest logs
+          </Button>
+          <Button component={Link} to="/app/logs" variant="outlined" size="large">
+            Explore logs
+          </Button>
+        </Box>
       </Paper>
 
       {error && (
@@ -148,7 +164,7 @@ export default function Dashboard() {
           </Typography>
           <Button
             component={Link}
-            to="/ingest"
+            to="/app/ingest"
             variant="contained"
             size="large"
           >

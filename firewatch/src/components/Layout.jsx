@@ -58,10 +58,10 @@ export default function Layout({ children }) {
   };
 
   const navItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Log Explorer', icon: <SearchIcon />, path: '/logs' },
-    { text: 'Alerts', icon: <WarningIcon />, path: '/alerts' },
-    { text: 'Log Ingestion', icon: <UploadFileIcon />, path: '/ingest' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/app' },
+    { text: 'Log Explorer', icon: <SearchIcon />, path: '/app/logs' },
+    { text: 'Alerts', icon: <WarningIcon />, path: '/app/alerts' },
+    { text: 'Log Ingestion', icon: <UploadFileIcon />, path: '/app/ingest' },
   ];
 
   const drawer = (
@@ -136,7 +136,7 @@ export default function Layout({ children }) {
     </Box>
   );
 
-  if (location.pathname === '/login') {
+  if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
     return children;
   }
 

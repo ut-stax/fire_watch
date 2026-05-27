@@ -26,9 +26,13 @@ export function AlertCard({ alert, onSelect, onAcknowledge, isSelected = false }
         borderLeft: 4,
         borderColor: severityColor,
         cursor: 'pointer',
-        bgcolor: isSelected ? 'grey.800' : 'background.paper',
+        bgcolor: isSelected ? 'primary.soft' : 'background.paper',
+        borderRadius: 2,
+        boxShadow: '0 2px 8px rgba(26,26,26,0.06)',
+        transition: 'background-color 0.2s ease',
         '&:hover': {
-          bgcolor: 'grey.800',
+          bgcolor: 'primary.soft',
+          transform: 'translateY(-2px)'
         },
       }}
     >

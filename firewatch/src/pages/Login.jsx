@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { signInWithGoogle, signInWithEmail } from '../firebase/auth';
 import { useAuth } from '../hooks/useAuth.jsx';
 import {
@@ -28,7 +28,7 @@ export default function Login() {
   const { user } = useAuth();
 
   if (user) {
-    navigate('/');
+    navigate('/app');
     return null;
   }
 
@@ -37,7 +37,7 @@ export default function Login() {
     setLoading(true);
     try {
       await signInWithGoogle();
-      navigate('/');
+      navigate('/app');
     } catch (err) {
       setError(err.message || 'Failed to sign in with Google');
     } finally {
@@ -58,7 +58,7 @@ export default function Login() {
 
     try {
       await signInWithEmail(email, password);
-      navigate('/');
+      navigate('/app');
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
         setError('User not found. Please check your email.');
@@ -168,6 +168,12 @@ export default function Login() {
               Password: Demo123!
             </Typography>
           </Alert>
+
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Typography variant="body2">
+              Don't have an account? <Link to="/signup">Create one</Link>
+            </Typography>
+          </Box>
         </Paper>
       </Container>
     </Box>

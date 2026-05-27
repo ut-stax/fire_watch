@@ -1,121 +1,121 @@
 # FireWatch SIEM
 
-A browser-based Security Information & Event Management (SIEM) dashboard built with React, Firebase, and Tailwind CSS.
+FireWatch is a browser-based Security Information & Event Management (SIEM) dashboard focused on real-time event monitoring, fast investigation, and lightweight alert triage. It ships with ingestion tools to populate test data and a correlation engine to detect common attack patterns.
 
-## Features
+This repository contains a demo-ready UI built with React, Material UI, and Firebase for data/auth, and a small rules engine to generate alerts from incoming events.
 
-- **Real-time Event Monitoring**: Live dashboard with streaming security events
-- **Correlation Engine**: Automatic detection of attack patterns (brute force, port scans, privilege escalation)
-- **Alert Management**: Triage and acknowledge security alerts
-- **Log Explorer**: Search, filter, and investigate events with full-text search
-- **Time Range Analysis**: Filter data by preset or custom time ranges
-- **Log Ingestion**: Manual entry, CSV/JSON import, and fake log generator
+Key goals
+- Real-time visibility into security events
+- Fast investigation with search, filters and CSV export
+- Lightweight alert triage with acknowledge/history
+- Easy local testing via fake event generator
 
-## Tech Stack
+---
 
-- **React 18** - UI library
-- **Firebase** - Firestore (database), Auth (authentication), Hosting
-- **Tailwind CSS** - Styling
-- **Recharts** - Data visualization
-- **Vite** - Build tool
+## What's included
+- Dashboard with KPI tiles, timeline and charts
+- Log Explorer: full-text search, filters, CSV export
+- Alerts: active alerts list, detail pane, history
+- Log Ingestion: manual entry, file upload and fake generator
+- Auth: Google Sign-in + Email/Password (Firebase)
 
-## Quick Start
+---
 
-### Prerequisites
+## Quick start (local)
 
+Prerequisites
 - Node.js 18+
-- Firebase account
+- Firebase account (for Firestore + Auth)
 
-### Setup
+Steps
 
-1. **Clone the repository**
-   ```bash
-   git clone <repo-url>
-   cd firewatch
-   ```
+1. Clone the repo and install dependencies
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+git clone <repo-url>
+cd firewatch
+npm install
+```
 
-3. **Configure Firebase**
-   - Create a Firebase project at [firebase.google.com](https://firebase.google.com)
-   - Enable Firestore (in test mode initially)
-   - Enable Authentication (Google and Email/Password providers)
-   - Copy your Firebase config to `src/firebase/config.js`
+2. Add Firebase config
+- Create a Firebase project and enable Firestore and Authentication (Google + Email/Password).
+- Copy your project's Firebase config into `src/firebase/config.js`. Example:
 
-4. **Run development server**
-   ```bash
-   npm run dev
-   ```
+```js
+// src/firebase/config.js
+export const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "...",
+  appId: "...",
+};
+```
 
-5. **Build for production**
-   ```bash
-   npm run build
-   ```
+3. Run the dev server
 
-## Firebase Setup Guide
+```bash
+cd firewatch
+npm run dev
+# open http://localhost:5174
+```
 
-1. Create a new project in the Firebase Console
-2. Enable Firestore Database (Start in test mode for development)
-3. Enable Authentication:
-   - Go to Authentication → Sign-in method
-   - Enable Google Sign-In
-   - Enable Email/Password provider
-4. Add a web app to get your Firebase config object
-5. Deploy Firestore rules:
-   ```bash
-   firebase deploy --only firestore:rules
-   ```
+4. Use demo credentials (local demo only)
+- The login page shows demo credentials for quick testing.
 
-## Project Structure
+---
+
+## Build & deploy
+
+```bash
+npm run build
+# If using Firebase Hosting
+firebase deploy --only hosting
+```
+
+---
+
+## Project layout (high level)
 
 ```
 src/
-├── components/
-│   ├── alerts/           # Alert management components
-│   ├── dashboard/        # Dashboard charts and metrics
-│   ├── explorer/         # Log explorer components
-│   ├── ingestion/        # Log ingestion components
-│   └── Layout.jsx        # Main layout with sidebar
-├── contexts/
-│   └── TimeRangeContext.jsx  # Global time range context
-├── firebase/
-│   ├── auth.js           # Authentication helpers
-│   ├── config.js         # Firebase configuration
-│   ├── events.js         # Events collection helpers
-│   └── alerts.js         # Alerts collection helpers
-├── hooks/
-│   ├── useAuth.js        # Authentication hook
-│   ├── useEvents.js      # Events stream hook
-│   ├── useAlerts.js      # Alerts stream hook
-│   └── useTimeRange.js   # Time range hook
-├── pages/
-│   ├── Dashboard.jsx     # Main dashboard
-│   ├── LogExplorer.jsx   # Event search & investigation
-│   ├── Alerts.jsx        # Alert management
-│   ├── Login.jsx         # Authentication page
-│   └── LogIngestion.jsx  # Log import page
-├── utils/
-│   ├── severityColors.js # Severity styling utilities
-│   └── fakeLogGenerator.js # Test data generator
-└── correlation/
-    ├── engine.js         # Correlation engine runner
-    └── rules.js          # Detection rules
+├─ components/       # UI components and small widgets
+├─ pages/            # Route-level pages (Dashboard, Login, Alerts, etc.)
+├─ firebase/         # Firebase helpers (auth, events, alerts, config)
+├─ hooks/            # Custom React hooks (useEvents, useAlerts, useAuth)
+├─ contexts/         # App-wide contexts (TimeRange)
+├─ correlation/      # Simple rules engine for alerting
+└─ public/           # Static assets (illustrations, chevrons)
 ```
 
-## Deployment
+---
 
-1. Install Firebase CLI: `npm install -g firebase-tools`
-2. Login: `firebase login`
-3. Initialize hosting: `firebase init hosting`
-4. Build and deploy:
-   ```bash
-   npm run build
-   firebase deploy
-   ```
+## Firebase notes
+- Firestore: used for events and alerts collections. Start in test mode during development, then tighten security rules before production.
+- Authentication: enable Google and Email/Password under Firebase Console → Authentication.
+- The repo contains `firestore.rules` for example rules — review them before deploying.
+
+---
+
+## Development tips
+- The app uses a token-based design system (see `src/index.css`) — change colors/radii there to rebrand.
+- The MUI theme lives in `src/theme.js` for quick typography and palette changes.
+- To add synthetic events for demos, use the Log Ingestion → Fake Generator page.
+
+---
+
+## Contributing
+- Open an issue to propose changes or report bugs.
+- Fork and submit a PR for code changes; keep changes focused and include screenshots where relevant.
+
+---
+
+## Troubleshooting
+- Port conflict: Vite will attempt the next available port; check terminal output for the correct URL.
+- Firebase auth errors: ensure authorized domains include `localhost` in Firebase Console.
+
+---
 
 ## License
-
 MIT

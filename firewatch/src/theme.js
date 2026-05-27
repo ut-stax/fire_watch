@@ -1,66 +1,103 @@
 import { createTheme } from '@mui/material/styles';
 
+const designTokens = {
+  colors: {
+    primary: '#024ad8',
+    primaryBright: '#296ef9',
+    primaryDeep: '#0e3191',
+    primarySoft: '#c9e0fc',
+    onPrimary: '#ffffff',
+    ink: '#1a1a1a',
+    inkDeep: '#000000',
+    canvas: '#ffffff',
+    cloud: '#f7f7f7',
+    fog: '#e8e8e8',
+    steel: '#c2c2c2',
+    error: '#b3262b',
+  },
+};
+
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#3b82f6',
-    },
-    secondary: {
-      main: '#8b5cf6',
+      main: designTokens.colors.primary,
+      light: designTokens.colors.primaryBright,
+      dark: designTokens.colors.primaryDeep,
+      contrastText: designTokens.colors.onPrimary,
     },
     background: {
-      default: '#111827',
-      paper: '#1f2937',
+      default: designTokens.colors.canvas,
+      paper: designTokens.colors.canvas,
     },
-    success: {
-      main: '#10b981',
+    text: {
+      primary: designTokens.colors.ink,
     },
-    warning: {
-      main: '#f59e0b',
-    },
-    error: {
-      main: '#ef4444',
-    },
-    info: {
-      main: '#06b6d4',
-    },
+    error: { main: designTokens.colors.error },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: "Manrope, Arial, sans-serif",
     h1: {
-      fontSize: '2.5rem',
-      fontWeight: 700,
+      fontSize: '4.5rem',
+      fontWeight: 500,
+      lineHeight: 1,
     },
     h2: {
-      fontSize: '2rem',
-      fontWeight: 600,
+      fontSize: '3.5rem',
+      fontWeight: 500,
+      lineHeight: 1,
     },
     h3: {
-      fontSize: '1.5rem',
-      fontWeight: 600,
+      fontSize: '2.75rem',
+      fontWeight: 500,
+      lineHeight: 1,
     },
     h4: {
+      fontSize: '2rem',
+      fontWeight: 500,
+      lineHeight: 1,
+    },
+    h5: {
+      fontSize: '1.5rem',
+      fontWeight: 500,
+    },
+    h6: {
       fontSize: '1.25rem',
+      fontWeight: 500,
+    },
+    body1: {
+      fontSize: '1rem',
+      fontWeight: 400,
+    },
+    button: {
+      textTransform: 'uppercase',
       fontWeight: 600,
+      letterSpacing: '0.7px',
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 4, // default for buttons/inputs
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
-          fontWeight: 500,
+          borderRadius: 4,
+        },
+        containedPrimary: {
+          backgroundColor: designTokens.colors.primary,
+          color: designTokens.colors.onPrimary,
+          '&:hover': {
+            backgroundColor: designTokens.colors.primaryDeep,
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+          borderRadius: 16,
+          boxShadow: '0 2px 8px rgba(26,26,26,0.08)',
         },
       },
     },
@@ -74,4 +111,5 @@ const theme = createTheme({
   },
 });
 
+export { designTokens };
 export default theme;

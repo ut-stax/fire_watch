@@ -38,13 +38,16 @@ export default function Alerts() {
 
   return (
     <Box>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h3" gutterBottom>
-          Alerts
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Monitor and triage security alerts in real time
-        </Typography>
+      <Paper sx={{ p: 4, mb: 3, borderRadius: 3, bgcolor: 'primary.soft', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography variant="h3" gutterBottom fontWeight={700} color="text.primary">
+            Alerts
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Monitor and triage security alerts in real time
+          </Typography>
+        </Box>
+        <Box />
       </Paper>
 
       {error && (

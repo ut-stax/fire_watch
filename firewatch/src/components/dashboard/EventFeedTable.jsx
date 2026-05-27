@@ -32,7 +32,7 @@ const getSeverityColor = (severity) => {
 export function EventFeedTable({ events = [], loading = false }) {
   if (loading) {
     return (
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.08)' }}>
         <Typography variant="h6" gutterBottom>
           Live Event Feed
         </Typography>
@@ -46,7 +46,7 @@ export function EventFeedTable({ events = [], loading = false }) {
   const displayEvents = events.slice(0, 50);
 
   return (
-    <Paper>
+    <Paper sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.06)' }}>
       <TableContainer>
         <Table size="small">
           <TableHead>
@@ -67,17 +67,15 @@ export function EventFeedTable({ events = [], loading = false }) {
                   : new Date(event.timestamp);
 
                 return (
-                  <TableRow key={event.id} hover>
-                    <TableCell>{format(eventTime, 'HH:mm:ss')}</TableCell>
-                    <TableCell sx={{ fontFamily: 'monospace', fontSize: 12 }}>
-                      {event.source_ip}
-                    </TableCell>
-                    <TableCell>{event.event_type.replace(/_/g, ' ')}</TableCell>
+                  <TableRow key={event.id} hover sx={{ '&:hover': { backgroundColor: 'primary.soft' } }}>
+                    <TableCell sx={{ whiteSpace: 'nowrap', fontSize: 13 }}>{format(eventTime, 'HH:mm:ss')}</TableCell>
+                    <TableCell sx={{ fontFamily: 'monospace', fontSize: 13 }}>{event.source_ip}</TableCell>
+                    <TableCell sx={{ textTransform: 'capitalize' }}>{event.event_type.replace(/_/g, ' ')}</TableCell>
                     <TableCell>
                       <Box
                         component="span"
                         sx={{
-                          px: 1,
+                          px: 1.25,
                           py: 0.5,
                           borderRadius: 1,
                           fontSize: 12,
@@ -89,7 +87,7 @@ export function EventFeedTable({ events = [], loading = false }) {
                         {event.severity?.toUpperCase()}
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ maxWidth: 200 }} noWrap>
+                    <TableCell sx={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {event.message}
                     </TableCell>
                   </TableRow>

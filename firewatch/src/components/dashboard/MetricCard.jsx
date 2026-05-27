@@ -25,20 +25,23 @@ export function MetricCard({ title, value, icon: Icon, color = 'primary' }) {
         color: colors.text,
         position: 'relative',
         overflow: 'hidden',
+        borderRadius: 2,
+        boxShadow: '0 2px 8px rgba(26,26,26,0.08)',
+        minHeight: 120,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box>
-          <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+          <Typography variant="caption" sx={{ opacity: 0.9, mb: 1 }}>
             {title}
           </Typography>
-          <Typography variant="h3" fontWeight={700}>
+          <Typography variant="h4" fontWeight={700}>
             {value}
           </Typography>
         </Box>
         {Icon && (
-          <Box sx={{ opacity: 0.2, fontSize: 48 }}>
-            <Icon />
+          <Box sx={{ opacity: 0.12, fontSize: 56 }}>
+            <Icon fontSize="inherit" />
           </Box>
         )}
       </Box>

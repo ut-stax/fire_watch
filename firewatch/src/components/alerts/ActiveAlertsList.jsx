@@ -30,7 +30,7 @@ export function ActiveAlertsList({
 
   if (loading) {
     return (
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.06)' }}>
         <Typography variant="h6" gutterBottom>
           Active Alerts
         </Typography>
@@ -44,7 +44,7 @@ export function ActiveAlertsList({
   }
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.06)' }}>
       <Typography variant="h6" gutterBottom>
         Active Alerts {alerts.length > 0 && `(${alerts.length})`}
       </Typography>
