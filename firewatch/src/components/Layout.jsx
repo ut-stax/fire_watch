@@ -47,7 +47,7 @@ export default function Layout({ children }) {
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -56,6 +56,12 @@ export default function Layout({ children }) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  useEffect(() => {
+    if (isMobile && mobileOpen) {
+      setMobileOpen(false);
+    }
+  }, [location.pathname, isMobile, mobileOpen]);
 
   const navItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/app' },
@@ -157,8 +163,9 @@ export default function Layout({ children }) {
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, color: 'text.primary' }}
+            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >
-            <MenuIcon />
+            {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
           <Typography variant="h6" noWrap component="div" color="text.primary">
             FireWatch
