@@ -1,7 +1,6 @@
 <div align="center">
 
-<img src="./fire_watch/71460285-a9b1-4b44-8d5f-6848d11b102e.png" alt="FireWatch SIEM" width="120" />
-
+<img src="./firewatch/71460285-a9b1-4b44-8d5f-6848d11b102e.png" alt="FireWatch SIEM" width="120" />
 # FireWatch SIEM
 
 FireWatch is a browser-based Security Information & Event Management (SIEM) dashboard focused on real-time event monitoring, fast investigation, and lightweight alert triage.
