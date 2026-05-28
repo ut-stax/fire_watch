@@ -1,22 +1,28 @@
-/**
- * Manual Entry Form Component
- * Allows analysts to manually enter individual log events
- */
-
 import { useState } from 'react';
 import { addEvent } from '../../firebase/events';
 import { normalizeEvent, validateEvent } from '../../utils/normalizer';
 import { Paper, Typography, TextField, Select, MenuItem, FormControl, InputLabel, Button, Alert, Box } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { surfaceSx } from '../dashboard/dashboardStyles';
 
-const EVENT_TYPES = [
-  'failed_login',
-  'successful_login',
-  'port_scan',
-  'privilege_escalation',
-  'info',
-];
-
+const EVENT_TYPES = ['failed_login', 'successful_login', 'port_scan', 'privilege_escalation', 'info'];
 const SEVERITY_LEVELS = ['critical', 'high', 'medium', 'low', 'info'];
+
+const fieldSx = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    bgcolor: 'var(--color-surface)',
+    '& fieldset': { borderColor: 'var(--color-border)' },
+    '&:hover fieldset': { borderColor: 'var(--color-text-muted)' },
+    '&.Mui-focused fieldset': { borderColor: 'var(--color-primary)' },
+  },
+  '& .MuiInputLabel-root': {
+    color: 'var(--color-text-muted)',
+  },
+  '& .MuiInputBase-input': {
+    color: 'var(--color-text-primary)',
+  },
+};
 
 export function ManualEntryForm() {
   const [formData, setFormData] = useState({
@@ -47,33 +53,20 @@ export function ManualEntryForm() {
     setSuccess(false);
 
     try {
-      // Validate required fields
-      if (!formData.source_ip.trim()) {
-        throw new Error('Source IP is required');
-      }
-      if (!formData.event_type) {
-        throw new Error('Event type is required');
-      }
-      if (!formData.severity) {
-        throw new Error('Severity is required');
-      }
-      if (!formData.message.trim()) {
-        throw new Error('Message is required');
-      }
+      if (!formData.source_ip.trim()) throw new Error('Source IP is required');
+      if (!formData.event_type) throw new Error('Event type is required');
+      if (!formData.severity) throw new Error('Severity is required');
+      if (!formData.message.trim()) throw new Error('Message is required');
 
-      // Normalize the event
       const normalizedEvent = normalizeEvent(formData);
-
-      // Validate the normalized event
       const validation = validateEvent(normalizedEvent);
+
       if (!validation.valid) {
-        throw new Error(`Validation failed: \${validation.errors.join(', ')}`);
+        throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
 
-      // Add to Firestore
       await addEvent(normalizedEvent);
 
-      // Show success message and reset form
       setSuccess(true);
       setFormData({
         source_ip: '',
@@ -84,41 +77,48 @@ export function ManualEntryForm() {
         raw_log: '',
       });
 
-      // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      console.error('Error submitting event:', err);
-      setError(err.message || 'Failed to submit event');
+    } catch (submitError) {
+      console.error('Error submitting event:', submitError);
+      setError(submitError.message || 'Failed to submit event');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        Manual Event Entry
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Enter a single security event manually
+    <Paper sx={{ ...surfaceSx, p: 3, minWidth: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
+        <Box>
+          <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+            Manual Event Entry
+          </Typography>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
+            Enter a single security event manually
+          </Typography>
+        </Box>
+        <Box sx={{ width: 40, height: 40, borderRadius: '9999px', display: 'grid', placeItems: 'center', bgcolor: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}>
+          <AddCircleIcon sx={{ fontSize: 20 }} />
+        </Box>
+      </Box>
+
+      <Typography sx={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', mb: 3 }}>
+        Use this form when you need to add a precise incident with curated fields and validation.
       </Typography>
 
       <form onSubmit={handleSubmit}>
-        {/* Success Message */}
         {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
+          <Alert severity="success" sx={{ mb: 3, borderRadius: '12px' }}>
             Event added successfully!
           </Alert>
         )}
 
-        {/* Error Message */}
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
             {error}
           </Alert>
         )}
 
-        {/* Source IP */}
         <TextField
           fullWidth
           label="Source IP *"
@@ -127,10 +127,9 @@ export function ManualEntryForm() {
           onChange={handleChange}
           placeholder="e.g., 192.168.1.100"
           disabled={loading}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2.5, ...fieldSx }}
         />
 
-        {/* Destination IP */}
         <TextField
           fullWidth
           label="Destination IP (optional)"
@@ -139,12 +138,11 @@ export function ManualEntryForm() {
           onChange={handleChange}
           placeholder="e.g., 10.0.0.1"
           disabled={loading}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2.5, ...fieldSx }}
         />
 
-        {/* Event Type and Severity */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 3 }}>
-          <FormControl fullWidth disabled={loading}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5 }}>
+          <FormControl fullWidth disabled={loading} sx={fieldSx}>
             <InputLabel>Event Type *</InputLabel>
             <Select
               name="event_type"
@@ -160,7 +158,7 @@ export function ManualEntryForm() {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth disabled={loading}>
+          <FormControl fullWidth disabled={loading} sx={fieldSx}>
             <InputLabel>Severity *</InputLabel>
             <Select
               name="severity"
@@ -177,7 +175,6 @@ export function ManualEntryForm() {
           </FormControl>
         </Box>
 
-        {/* Message */}
         <TextField
           fullWidth
           label="Message *"
@@ -188,10 +185,9 @@ export function ManualEntryForm() {
           multiline
           rows={3}
           disabled={loading}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2.5, ...fieldSx }}
         />
 
-        {/* Raw Log */}
         <TextField
           fullWidth
           label="Raw Log (optional)"
@@ -202,16 +198,24 @@ export function ManualEntryForm() {
           multiline
           rows={3}
           disabled={loading}
-          sx={{ mb: 3 }}
+          sx={{ mb: 3, ...fieldSx }}
         />
 
-        {/* Submit Button */}
         <Button
           type="submit"
           variant="contained"
           fullWidth
           disabled={loading}
           size="large"
+          sx={{
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            bgcolor: 'var(--color-primary)',
+            color: 'var(--color-on-primary)',
+            minHeight: 48,
+            '&:hover': { bgcolor: 'var(--color-primary-dark)' },
+          }}
         >
           {loading ? 'Submitting...' : 'Add Event'}
         </Button>

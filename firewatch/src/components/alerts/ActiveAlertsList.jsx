@@ -1,11 +1,7 @@
-﻿/**
- * Active Alerts List Component
- * Displays unacknowledged alerts sorted by severity and time
- */
-
-import { AlertCard } from './AlertCard';
+﻿import { AlertCard } from './AlertCard';
 import { getSeverityOrder } from '../../utils/severityColors';
 import { Paper, Typography, Box, Skeleton } from '@mui/material';
+import { surfaceSx } from '../dashboard/dashboardStyles';
 
 export function ActiveAlertsList({
   alerts = [],
@@ -30,13 +26,16 @@ export function ActiveAlertsList({
 
   if (loading) {
     return (
-      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.06)' }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper sx={{ ...surfaceSx, p: 3 }}>
+        <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
           Active Alerts
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} variant="rounded" height={80} />
+        <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5, mb: 2 }}>
+          Unacknowledged incidents sorted by severity and recency
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {[...Array(5)].map((_, index) => (
+            <Skeleton key={index} variant="rounded" height={92} sx={{ borderRadius: '12px' }} />
           ))}
         </Box>
       </Paper>
@@ -44,22 +43,32 @@ export function ActiveAlertsList({
   }
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(26,26,26,0.06)' }}>
-      <Typography variant="h6" gutterBottom>
-        Active Alerts {alerts.length > 0 && `(${alerts.length})`}
-      </Typography>
+    <Paper sx={{ ...surfaceSx, p: 3, minWidth: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2 }}>
+        <Box>
+          <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+            Active Alerts {alerts.length > 0 && `(${alerts.length})`}
+          </Typography>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
+            Unacknowledged incidents sorted by severity and recency
+          </Typography>
+        </Box>
+        <Box sx={{ px: 1.25, py: 0.5, borderRadius: '9999px', bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>
+          {alerts.length} open
+        </Box>
+      </Box>
 
       {alerts.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography variant="h3" sx={{ mb: 2 }}>
+        <Box sx={{ textAlign: 'center', py: 5, px: 2, border: '1px dashed var(--color-border)', borderRadius: '12px', bgcolor: 'var(--color-row-hover)' }}>
+          <Typography sx={{ fontSize: '2rem', mb: 1 }}>
             ✓
           </Typography>
-          <Typography color="text.secondary">
+          <Typography sx={{ color: 'var(--color-text-muted)' }}>
             No active alerts — environment is clear.
           </Typography>
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: 384, overflowY: 'auto' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, maxHeight: { xs: 560, xl: 760 }, overflowY: 'auto', pr: 0.5 }}>
           {sortedAlerts.map((alert) => (
             <AlertCard
               key={alert.id}

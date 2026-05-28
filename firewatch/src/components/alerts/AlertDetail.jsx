@@ -1,14 +1,10 @@
-/**
- * Alert Detail Panel Component
- * Displays detailed information about a selected alert and its related events
- */
-
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { getSeverityChartColor, getSeverityLabel } from '../../utils/severityColors';
 import { Paper, Typography, Box, Skeleton } from '@mui/material';
+import { surfaceSx, pastelPills } from '../dashboard/dashboardStyles';
 
 export function AlertDetail({ alert = null }) {
   const [relatedEvents, setRelatedEvents] = useState([]);
@@ -51,8 +47,8 @@ export function AlertDetail({ alert = null }) {
 
   if (!alert) {
     return (
-      <Paper sx={{ p: 6, textAlign: 'center' }}>
-        <Typography color="text.secondary">
+      <Paper sx={{ ...surfaceSx, p: 6, textAlign: 'center', minHeight: 360, display: 'grid', placeItems: 'center' }}>
+        <Typography sx={{ color: 'var(--color-text-muted)' }}>
           Select an alert to view details
         </Typography>
       </Paper>
@@ -65,32 +61,42 @@ export function AlertDetail({ alert = null }) {
     : new Date(alert.triggered_at);
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Alert Details
-      </Typography>
+    <Paper sx={{ ...surfaceSx, p: 3, minWidth: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
+        <Box>
+          <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+            Alert Details
+          </Typography>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
+            Investigation context for the selected alert
+          </Typography>
+        </Box>
+        <Box sx={{ px: 1.25, py: 0.5, borderRadius: '9999px', bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>
+          {alert.acknowledged ? 'Acknowledged' : 'Open'}
+        </Box>
+      </Box>
 
       {/* Alert Metadata */}
-      <Box sx={{ mb: 4, pb: 3, borderBottom: 1, borderColor: 'divider' }}>
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+      <Box sx={{ mb: 3.5, pb: 3, borderBottom: '1px solid var(--color-border)' }}>
+        <Box sx={{ mb: 2.25 }}>
+          <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Rule
           </Typography>
-          <Typography sx={{ fontWeight: 600 }}>{alert.rule_name}</Typography>
+          <Typography sx={{ fontWeight: 700, color: 'var(--color-text-primary)', wordBreak: 'break-word' }}>{alert.rule_name}</Typography>
         </Box>
 
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+        <Box sx={{ mb: 2.25 }}>
+          <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Severity
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box
               sx={{
-                bgcolor: severityColor,
+                bgcolor: pastelPills?.[alert.severity?.toLowerCase()]?.bg || severityColor,
                 color: 'common.white',
                 px: 1,
                 py: 0.5,
-                borderRadius: 1,
+                borderRadius: '9999px',
                 fontSize: '0.75rem',
                 fontWeight: 600,
               }}
@@ -100,34 +106,37 @@ export function AlertDetail({ alert = null }) {
           </Box>
         </Box>
 
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+        <Box sx={{ mb: 2.25 }}>
+          <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Source IP
           </Typography>
-          <Typography sx={{ fontFamily: 'monospace' }}>{alert.source_ip}</Typography>
+          <Typography sx={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--color-text-primary)' }}>{alert.source_ip}</Typography>
         </Box>
 
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+        <Box sx={{ mb: 2.25 }}>
+          <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Triggered At
           </Typography>
-          <Typography>{format(alertTime, 'MMM dd, yyyy HH:mm:ss')}</Typography>
+          <Typography sx={{ color: 'var(--color-text-primary)' }}>{format(alertTime, 'MMM dd, yyyy HH:mm:ss')}</Typography>
         </Box>
 
         {alert.related_ids && alert.related_ids.length > 0 && (
           <Box>
-            <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+            <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Related Events
             </Typography>
-            <Typography>{alert.related_ids.length} event(s)</Typography>
+            <Typography sx={{ color: 'var(--color-text-primary)' }}>{alert.related_ids.length} event(s)</Typography>
           </Box>
         )}
       </Box>
 
       {/* Related Events */}
       <Box>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+        <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)', mb: 0.75 }}>
           Related Events
+        </Typography>
+        <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mb: 2 }}>
+          Events tied to the selected alert rule
         </Typography>
 
         {eventsLoading ? (
@@ -137,40 +146,42 @@ export function AlertDetail({ alert = null }) {
             ))}
           </Box>
         ) : relatedEvents.length > 0 ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, maxHeight: 256, overflowY: 'auto' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, maxHeight: 320, overflowY: 'auto', pr: 0.5 }}>
             {relatedEvents.map((event) => {
               const eventTime = event.timestamp?.toDate?.()
                 ? event.timestamp.toDate()
                 : new Date(event.timestamp);
               const eventSeverityColor = getSeverityChartColor(event.severity);
 
+              const eventSeverityToken = pastelPills?.[event.severity?.toLowerCase()] || { bg: eventSeverityColor, fg: 'white' };
+
               return (
-                <Paper key={event.id} sx={{ p: 2, bgcolor: 'grey.800' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                <Paper key={event.id} sx={{ ...surfaceSx, p: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 1 }}>
+                    <Typography sx={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                       {format(eventTime, 'HH:mm:ss')}
                     </Typography>
                     <Box
                       sx={{
-                        bgcolor: eventSeverityColor,
-                        color: 'common.white',
+                        bgcolor: eventSeverityToken.bg,
+                        color: eventSeverityToken.fg,
                         px: 1,
                         py: 0.25,
-                        borderRadius: 1,
+                        borderRadius: '9999px',
                         fontSize: '0.65rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                       }}
                     >
                       {event.severity.toUpperCase()}
                     </Box>
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    <Box component="span" color="text.secondary">Type:</Box> {event.event_type.replace(/_/g, ' ')}
+                  <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mb: 0.5 }}>
+                    Type: <Box component="span" sx={{ color: 'var(--color-text-primary)' }}>{event.event_type.replace(/_/g, ' ')}</Box>
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    <Box component="span" color="text.secondary">IP:</Box> {event.source_ip}
+                  <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mb: 0.5 }}>
+                    IP: <Box component="span" sx={{ color: 'var(--color-text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>{event.source_ip}</Box>
                   </Typography>
-                  <Typography variant="caption" color="text.disabled" noWrap>
+                  <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }} noWrap>
                     {event.message}
                   </Typography>
                 </Paper>
@@ -178,7 +189,7 @@ export function AlertDetail({ alert = null }) {
             })}
           </Box>
         ) : (
-          <Typography color="text.secondary" variant="body2">
+          <Typography sx={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
             No related events found
           </Typography>
         )}

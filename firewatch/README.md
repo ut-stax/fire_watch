@@ -1,35 +1,54 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/firewatch-siem/firewatch/main/public/logo.svg" alt="FireWatch SIEM" width="120" height="120">
+
 # FireWatch SIEM
 
-FireWatch is a browser-based Security Information & Event Management (SIEM) dashboard focused on real-time event monitoring, fast investigation, and lightweight alert triage. It ships with ingestion tools to populate test data and a correlation engine to detect common attack patterns.
+FireWatch is a browser-based Security Information & Event Management (SIEM) dashboard focused on real-time event monitoring, fast investigation, and lightweight alert triage.
 
-This repository contains a demo-ready UI built with React, Material UI, and Firebase for data/auth, and a small rules engine to generate alerts from incoming events.
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-12-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Material UI](https://img.shields.io/badge/Material--UI-9-007FFF?logo=mui&logoColor=white)](https://mui.com)
 
-Key goals
-- Real-time visibility into security events
-- Fast investigation with search, filters and CSV export
-- Lightweight alert triage with acknowledge/history
-- Easy local testing via fake event generator
+</div>
 
----
+## Features
 
-## What's included
-- Dashboard with KPI tiles, timeline and charts
-- Log Explorer: full-text search, filters, CSV export
-- Alerts: active alerts list, detail pane, history
-- Log Ingestion: manual entry, file upload and fake generator
-- Auth: Google Sign-in + Email/Password (Firebase)
+- **Real-time Dashboard** — KPI tiles, event timeline, and interactive charts
+- **Log Explorer** — Full-text search, advanced filters, CSV export
+- **Alert Management** — Active alerts list, detail view, acknowledgment history
+- **Log Ingestion** — Manual entry, file upload, and fake event generator for testing
+- **Authentication** — Google Sign-in and Email/Password via Firebase Auth
 
----
+## Tech Stack
 
-## Quick start (local)
+| Category | Technology |
+|----------|------------|
+| **Framework** | [React 19](https://react.dev) |
+| **Build Tool** | [Vite 8](https://vitejs.dev) |
+| **UI Library** | [Material UI 9](https://mui.com) |
+| **Styling** | [Tailwind CSS 4](https://tailwindcss) + CSS Tokens |
+| **Charts** | [Chart.js 4](https://www.chartjs.org) + [Recharts 3](https://recharts.org) |
+| **Backend** | [Firebase](https://firebase.google.com) (Firestore, Auth) |
+| **Routing** | [React Router 7](https://reactrouter.com) |
+| **CSV Parsing** | [PapaParse 5](https://www.papaparse.com) |
+| **Date Utils** | [date-fns 4](https://date-fns.org) |
+| **Font** | [Roboto (Fontsource)](https://fontsource.org) |
+| **Icons** | [MUI Icons](https://mui.com/icons) |
 
-Prerequisites
+**Dev Tools**
+- ESLint + React Hooks Plugin
+- React Refresh
+
+## Quick Start
+
+### Prerequisites
 - Node.js 18+
-- Firebase account (for Firestore + Auth)
+- Firebase project with Firestore and Authentication enabled
 
-Steps
-
-1. Clone the repo and install dependencies
+### Installation
 
 ```bash
 git clone <repo-url>
@@ -37,12 +56,11 @@ cd firewatch
 npm install
 ```
 
-2. Add Firebase config
-- Create a Firebase project and enable Firestore and Authentication (Google + Email/Password).
-- Copy your project's Firebase config into `src/firebase/config.js`. Example:
+### Configuration
+
+Create `src/firebase/config.js`:
 
 ```js
-// src/firebase/config.js
 export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -53,69 +71,40 @@ export const firebaseConfig = {
 };
 ```
 
-3. Run the dev server
+### Development
 
 ```bash
-cd firewatch
 npm run dev
-# open http://localhost:5174
+# Open http://localhost:5174
 ```
 
-4. Use demo credentials (local demo only)
-- The login page shows demo credentials for quick testing.
-
----
-
-## Build & deploy
+### Build
 
 ```bash
 npm run build
-# If using Firebase Hosting
-firebase deploy --only hosting
+# firebase deploy --only hosting
 ```
 
----
-
-## Project layout (high level)
+## Project Structure
 
 ```
 src/
-├─ components/       # UI components and small widgets
+├─ components/       # UI components and widgets
 ├─ pages/            # Route-level pages (Dashboard, Login, Alerts, etc.)
 ├─ firebase/         # Firebase helpers (auth, events, alerts, config)
-├─ hooks/            # Custom React hooks (useEvents, useAlerts, useAuth)
+├─ hooks/            # Custom React hooks
 ├─ contexts/         # App-wide contexts (TimeRange)
-├─ correlation/      # Simple rules engine for alerting
-└─ public/           # Static assets (illustrations, chevrons)
+├─ correlation/      # Rules engine for alerting
+├─ utils/            # Utility functions
+└─ public/           # Static assets
 ```
 
----
-
-## Firebase notes
-- Firestore: used for events and alerts collections. Start in test mode during development, then tighten security rules before production.
-- Authentication: enable Google and Email/Password under Firebase Console → Authentication.
-- The repo contains `firestore.rules` for example rules — review them before deploying.
-
----
-
-## Development tips
-- The app uses a token-based design system (see `src/index.css`) — change colors/radii there to rebrand.
-- The MUI theme lives in `src/theme.js` for quick typography and palette changes.
-- To add synthetic events for demos, use the Log Ingestion → Fake Generator page.
-
----
-
-## Contributing
-- Open an issue to propose changes or report bugs.
-- Fork and submit a PR for code changes; keep changes focused and include screenshots where relevant.
-
----
-
-## Troubleshooting
-- Port conflict: Vite will attempt the next available port; check terminal output for the correct URL.
-- Firebase auth errors: ensure authorized domains include `localhost` in Firebase Console.
-
----
-
 ## License
-MIT
+
+MIT License © FireWatch SIEM
+
+---
+
+<div align="center">
+Built with modern web technologies for enterprise-grade security monitoring.
+</div>

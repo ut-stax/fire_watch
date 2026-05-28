@@ -1,8 +1,3 @@
-/**
- * Filter Controls Component
- * Severity, event type, and source IP dropdown filters
- */
-
 import { useMemo } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
 
@@ -21,13 +16,20 @@ export function FilterControls({ events, filters, onFilterChange }) {
   }, [events]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
-      <FormControl size="small" sx={{ minWidth: 150 }}>
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+        gap: 1.5,
+      }}
+    >
+      <FormControl size="small" fullWidth>
         <InputLabel>Severity</InputLabel>
         <Select
           value={filters.severity || 'All'}
           onChange={(e) => onFilterChange('severity', e.target.value)}
           label="Severity"
+          sx={{ borderRadius: '8px', bgcolor: 'var(--color-surface)' }}
         >
           {SEVERITY_LEVELS.map((level) => (
             <MenuItem key={level} value={level}>
@@ -37,12 +39,13 @@ export function FilterControls({ events, filters, onFilterChange }) {
         </Select>
       </FormControl>
 
-      <FormControl size="small" sx={{ minWidth: 150 }}>
+      <FormControl size="small" fullWidth>
         <InputLabel>Event Type</InputLabel>
         <Select
           value={filters.eventType || 'All'}
           onChange={(e) => onFilterChange('eventType', e.target.value)}
           label="Event Type"
+          sx={{ borderRadius: '8px', bgcolor: 'var(--color-surface)' }}
         >
           {EVENT_TYPES.map((type) => (
             <MenuItem key={type} value={type}>
@@ -52,12 +55,13 @@ export function FilterControls({ events, filters, onFilterChange }) {
         </Select>
       </FormControl>
 
-      <FormControl size="small" sx={{ minWidth: 150 }}>
+      <FormControl size="small" fullWidth>
         <InputLabel>Source IP</InputLabel>
         <Select
           value={filters.sourceIP || 'All'}
           onChange={(e) => onFilterChange('sourceIP', e.target.value)}
           label="Source IP"
+          sx={{ borderRadius: '8px', bgcolor: 'var(--color-surface)' }}
         >
           {uniqueIPs.map((ip) => (
             <MenuItem key={ip} value={ip}>

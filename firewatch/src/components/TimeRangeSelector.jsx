@@ -7,11 +7,11 @@ import { useState } from 'react';
 import {
   Box,
   Button,
-  ButtonGroup,
   TextField,
   Popover,
   IconButton,
-  useTheme,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import CloseIcon from '@mui/icons-material/Close';
@@ -20,11 +20,12 @@ import { format } from 'date-fns';
 const PRESETS = ['Last 1h', 'Last 6h', 'Last 24h', 'Last 7d'];
 
 export function TimeRangeSelector({ timeRange, onTimeRangeChange }) {
-  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePresetClick = (preset) => {
-    onTimeRangeChange.setPreset(preset);
+    if (preset) {
+      onTimeRangeChange.setPreset(preset);
+    }
   };
 
   const handleCustomClick = (event) => {
@@ -47,24 +48,59 @@ export function TimeRangeSelector({ timeRange, onTimeRangeChange }) {
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <ButtonGroup variant="outlined" size="small">
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <ToggleButtonGroup
+        exclusive
+        value={timeRange.activePreset}
+        onChange={(_, value) => handlePresetClick(value)}
+        size="small"
+        sx={{
+          display: 'inline-flex',
+          border: '1px solid var(--color-border)',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          backgroundColor: 'var(--color-surface)',
+          '& .MuiToggleButtonGroup-grouped': {
+            border: 'none',
+            borderRadius: 0,
+            px: 1.25,
+            minHeight: 36,
+            color: 'var(--color-text-muted)',
+            textTransform: 'none',
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+            backgroundColor: 'transparent',
+            '&:not(:last-of-type)': {
+              borderRight: '1px solid var(--color-border)',
+            },
+            '&.Mui-selected': {
+              color: 'var(--color-text-primary)',
+              backgroundColor: 'var(--color-surface)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+              '&:hover': {
+                backgroundColor: 'var(--color-surface)',
+              },
+            },
+            '&:hover': {
+              backgroundColor: 'var(--color-row-hover)',
+            },
+          },
+        }}
+      >
         {PRESETS.map((preset) => (
-          <Button
+          <ToggleButton
             key={preset}
-            onClick={() => handlePresetClick(preset)}
-            variant={timeRange.activePreset === preset ? 'contained' : 'outlined'}
-            sx={{ textTransform: 'none' }}
+            value={preset}
           >
             {preset}
-          </Button>
+          </ToggleButton>
         ))}
-      </ButtonGroup>
+      </ToggleButtonGroup>
 
       <IconButton
         onClick={handleCustomClick}
         color={timeRange.activePreset === 'Custom' ? 'primary' : 'default'}
-        sx={{ border: `1px solid ${theme.palette.divider}` }}
+        sx={{ border: '1px solid var(--color-border)', borderRadius: '8px', bgcolor: 'var(--color-surface)' }}
       >
         <DateRangeIcon />
       </IconButton>
@@ -78,7 +114,7 @@ export function TimeRangeSelector({ timeRange, onTimeRangeChange }) {
         <Box
           component="form"
           onSubmit={handleCustomSubmit}
-          sx={{ p: 3, width: 300, display: 'flex', flexDirection: 'column', gap: 2 }}
+          sx={{ p: 3, width: 300, display: 'flex', flexDirection: 'column', gap: 2, bgcolor: 'var(--color-surface)' }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box component="span" fontWeight={600}>

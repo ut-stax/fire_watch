@@ -1,14 +1,10 @@
-﻿/**
- * Alert History Component
- * Displays previously acknowledged alerts in a table format
- */
-
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { getSeverityChartColor, getSeverityLabel } from '../../utils/severityColors';
 import { Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Skeleton, Alert, Box } from '@mui/material';
+import { surfaceSx, pastelPills } from '../dashboard/dashboardStyles';
 
 export function AlertHistory({ timeRange }) {
   const [alerts, setAlerts] = useState([]);
@@ -59,12 +55,15 @@ export function AlertHistory({ timeRange }) {
 
   if (loading) {
     return (
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper sx={{ ...surfaceSx, p: 3 }}>
+        <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
           Alert History
         </Typography>
+        <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5, mb: 2 }}>
+          Previously acknowledged alerts
+        </Typography>
         <TableContainer>
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 720 }}>
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
@@ -79,33 +78,33 @@ export function AlertHistory({ timeRange }) {
   }
 
   return (
-    <Paper sx={{ overflow: 'hidden' }}>
-      <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6">Alert History</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+    <Paper sx={{ ...surfaceSx, overflow: 'hidden' }}>
+      <Box sx={{ p: 3, borderBottom: '1px solid var(--color-border)' }}>
+        <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Alert History</Typography>
+        <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
           {alerts.length} acknowledged alert(s)
         </Typography>
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ m: 2 }}>
+        <Alert severity="error" sx={{ m: 2, borderRadius: '12px' }}>
           Error loading history: {error}
         </Alert>
       )}
 
       {alerts.length === 0 ? (
         <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography color="text.secondary">No acknowledged alerts yet</Typography>
+          <Typography sx={{ color: 'var(--color-text-muted)' }}>No acknowledged alerts yet</Typography>
         </Box>
       ) : (
-        <TableContainer>
-          <Table size="small">
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 720, '& .MuiTableCell-root': { borderBottomColor: 'var(--color-border)' } }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Time</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Rule</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Source IP</TableCell>
+                <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)' }}>Time</TableCell>
+                <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)' }}>Rule</TableCell>
+                <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)' }}>Severity</TableCell>
+                <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)' }}>Source IP</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -114,32 +113,33 @@ export function AlertHistory({ timeRange }) {
                   ? alert.triggered_at.toDate()
                   : new Date(alert.triggered_at);
                 const severityColor = getSeverityChartColor(alert.severity);
+                const severityToken = pastelPills?.[alert.severity?.toLowerCase()] || { bg: severityColor, fg: 'white' };
 
                 return (
-                  <TableRow key={alert.id} hover>
-                    <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                  <TableRow key={alert.id} hover sx={{ '&:hover > td': { backgroundColor: 'var(--color-row-hover)' } }}>
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', whiteSpace: 'nowrap', fontFamily: 'JetBrains Mono, monospace' }}>
                       {format(alertTime, 'MMM dd, HH:mm:ss')}
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <TableCell sx={{ color: 'var(--color-text-primary)', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {alert.rule_name}
                     </TableCell>
                     <TableCell>
                       <Box
                         sx={{
-                          bgcolor: severityColor,
-                          color: 'common.white',
+                          bgcolor: severityToken.bg,
+                          color: severityToken.fg,
                           px: 1,
                           py: 0.25,
-                          borderRadius: 1,
+                          borderRadius: '9999px',
                           fontSize: '0.7rem',
-                          fontWeight: 600,
+                          fontWeight: 700,
                           display: 'inline-block',
                         }}
                       >
                         {getSeverityLabel(alert.severity)}
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem' }}>
                       {alert.source_ip}
                     </TableCell>
                   </TableRow>

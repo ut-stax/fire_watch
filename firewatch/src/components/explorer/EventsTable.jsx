@@ -1,8 +1,3 @@
-/**
- * Events Table Component
- * Paginated table with sortable columns and clickable IP pivot
- */
-
 import { useState, useMemo } from 'react';
 import { format } from 'date-fns';
 import {
@@ -21,6 +16,19 @@ import { getSeverityChartColor, getSeverityLabel } from '../../utils/severityCol
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import { surfaceSx } from '../dashboard/dashboardStyles';
+
+function SortIcon({ columnKey, sortKey, sortDirection }) {
+  if (sortKey !== columnKey) {
+    return <UnfoldMoreIcon sx={{ fontSize: 16, opacity: 0.3 }} />;
+  }
+
+  return sortDirection === 'asc' ? (
+    <ArrowUpwardIcon sx={{ fontSize: 16 }} />
+  ) : (
+    <ArrowDownwardIcon sx={{ fontSize: 16 }} />
+  );
+}
 
 export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
   const [currentPage, setCurrentPage] = useState(0);
@@ -65,15 +73,6 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
     setCurrentPage(0);
   };
 
-  const SortIcon = ({ columnKey }) => {
-    if (sortConfig.key !== columnKey) {
-      return <UnfoldMoreIcon sx={{ fontSize: 16, opacity: 0.3 }} />;
-    }
-    return sortConfig.direction === 'asc' 
-      ? <ArrowUpwardIcon sx={{ fontSize: 16 }} /> 
-      : <ArrowDownwardIcon sx={{ fontSize: 16 }} />;
-  };
-
   const handleIPClick = (ip) => {
     if (onIPClick) {
       onIPClick(ip);
@@ -85,52 +84,60 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer>
-        <Table size="small">
+    <Paper sx={{ ...surfaceSx, overflow: 'hidden' }}>
+      <Box sx={{ px: { xs: 2, sm: 2.5 }, pt: 2.5, pb: 1 }}>
+        <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+          Event Results
+        </Typography>
+        <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
+          Sort any column or click an IP address to pivot the explorer
+        </Typography>
+      </Box>
+      <TableContainer sx={{ overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 980, '& .MuiTableCell-root': { borderBottomColor: 'var(--color-border)' } }}>
           <TableHead>
             <TableRow>
               <TableCell 
                 onClick={() => handleSort('timestamp')}
-                sx={{ cursor: 'pointer', fontWeight: 600 }}
+                sx={{ cursor: 'pointer', fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  Time <SortIcon columnKey="timestamp" />
+                  Time <SortIcon columnKey="timestamp" sortKey={sortConfig.key} sortDirection={sortConfig.direction} />
                 </Box>
               </TableCell>
               <TableCell 
                 onClick={() => handleSort('source_ip')}
-                sx={{ cursor: 'pointer', fontWeight: 600 }}
+                sx={{ cursor: 'pointer', fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  Source IP <SortIcon columnKey="source_ip" />
+                  Source IP <SortIcon columnKey="source_ip" sortKey={sortConfig.key} sortDirection={sortConfig.direction} />
                 </Box>
               </TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Dest IP</TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}>Dest IP</TableCell>
               <TableCell 
                 onClick={() => handleSort('event_type')}
-                sx={{ cursor: 'pointer', fontWeight: 600 }}
+                sx={{ cursor: 'pointer', fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  Type <SortIcon columnKey="event_type" />
+                  Type <SortIcon columnKey="event_type" sortKey={sortConfig.key} sortDirection={sortConfig.direction} />
                 </Box>
               </TableCell>
               <TableCell 
                 onClick={() => handleSort('severity')}
-                sx={{ cursor: 'pointer', fontWeight: 600 }}
+                sx={{ cursor: 'pointer', fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  Severity <SortIcon columnKey="severity" />
+                  Severity <SortIcon columnKey="severity" sortKey={sortConfig.key} sortDirection={sortConfig.direction} />
                 </Box>
               </TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Message</TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'var(--color-neutral-plate)', color: 'var(--color-text-primary)', position: 'sticky', top: 0, zIndex: 1 }}>Message</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedEvents.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                  <Typography color="text.secondary">
+                  <Typography sx={{ color: 'var(--color-text-muted)' }}>
                     No events match the current filters
                   </Typography>
                 </TableCell>
@@ -143,8 +150,15 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
                 const severityColor = getSeverityChartColor(event.severity);
 
                 return (
-                  <TableRow key={event.id} hover>
-                    <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                  <TableRow
+                    key={event.id}
+                    hover
+                    sx={{
+                      '&:hover > td': { backgroundColor: 'var(--color-row-hover)' },
+                      '& > td': { py: 1.5, px: 2, color: 'var(--color-text-primary)' },
+                    }}
+                  >
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', whiteSpace: 'nowrap', fontFamily: 'JetBrains Mono, monospace' }}>
                       {format(eventTime, 'MMM dd, HH:mm:ss')}
                     </TableCell>
                     <TableCell>
@@ -152,12 +166,12 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
                         component="button"
                         onClick={() => handleIPClick(event.source_ip)}
                         sx={{
-                          color: 'primary.main',
+                          color: 'var(--color-primary)',
                           fontFamily: 'monospace',
                           fontSize: '0.75rem',
                           cursor: 'pointer',
                           textDecoration: 'underline',
-                          '&:hover': { color: 'primary.light' },
+                          '&:hover': { color: 'var(--color-primary-dark)' },
                           p: 0,
                           border: 'none',
                           background: 'none',
@@ -166,10 +180,10 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
                         {event.source_ip}
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem' }}>
                       {event.dest_ip || '-'}
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textTransform: 'capitalize' }}>
                       {event.event_type?.replace(/_/g, ' ') || '-'}
                     </TableCell>
                     <TableCell>
@@ -188,8 +202,8 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
                         {getSeverityLabel(event.severity)}
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
-                      <Box sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <TableCell sx={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                      <Box sx={{ maxWidth: 360, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {event.message || '-'}
                       </Box>
                     </TableCell>
@@ -208,8 +222,8 @@ export function EventsTable({ events, onIPClick, rowsPerPage = 50 }) {
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[]}
-          labelDisplayedRows={() => `Page \${currentPage + 1} of \${totalPages}`}
-          sx={{ borderTop: 1, borderColor: 'divider' }}
+          labelDisplayedRows={() => `Page ${currentPage + 1} of ${totalPages}`}
+          sx={{ borderTop: '1px solid var(--color-border)', bgcolor: 'var(--color-neutral-plate)' }}
         />
       )}
     </Paper>

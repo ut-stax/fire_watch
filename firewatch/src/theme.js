@@ -2,18 +2,16 @@ import { createTheme } from '@mui/material/styles';
 
 const designTokens = {
   colors: {
-    primary: '#024ad8',
-    primaryBright: '#296ef9',
-    primaryDeep: '#0e3191',
-    primarySoft: '#c9e0fc',
+    primary: '#2563eb',
+    primaryDeep: '#1d4ed8',
+    primarySoft: '#dbeafe',
     onPrimary: '#ffffff',
-    ink: '#1a1a1a',
-    inkDeep: '#000000',
+    ink: '#18181b',
     canvas: '#ffffff',
-    cloud: '#f7f7f7',
-    fog: '#e8e8e8',
-    steel: '#c2c2c2',
-    error: '#b3262b',
+    surface: '#ffffff',
+    border: '#e4e4e7',
+    muted: '#71717a',
+    error: '#991b1b',
   },
 };
 
@@ -22,40 +20,40 @@ const theme = createTheme({
     mode: 'light',
     primary: {
       main: designTokens.colors.primary,
-      light: designTokens.colors.primaryBright,
       dark: designTokens.colors.primaryDeep,
       contrastText: designTokens.colors.onPrimary,
     },
     background: {
       default: designTokens.colors.canvas,
-      paper: designTokens.colors.canvas,
+      paper: designTokens.colors.surface,
     },
     text: {
       primary: designTokens.colors.ink,
+      secondary: designTokens.colors.muted,
     },
     error: { main: designTokens.colors.error },
   },
   typography: {
-    fontFamily: "Manrope, Arial, sans-serif",
+    fontFamily: "Inter, Geist Sans, Plus Jakarta Sans, Arial, sans-serif",
     h1: {
       fontSize: '4.5rem',
-      fontWeight: 500,
-      lineHeight: 1,
+      fontWeight: 700,
+      lineHeight: 1.02,
     },
     h2: {
       fontSize: '3.5rem',
-      fontWeight: 500,
-      lineHeight: 1,
+      fontWeight: 700,
+      lineHeight: 1.04,
     },
     h3: {
       fontSize: '2.75rem',
-      fontWeight: 500,
-      lineHeight: 1,
+      fontWeight: 700,
+      lineHeight: 1.05,
     },
     h4: {
       fontSize: '2rem',
-      fontWeight: 500,
-      lineHeight: 1,
+      fontWeight: 700,
+      lineHeight: 1.08,
     },
     h5: {
       fontSize: '1.5rem',
@@ -70,19 +68,19 @@ const theme = createTheme({
       fontWeight: 400,
     },
     button: {
-      textTransform: 'uppercase',
-      fontWeight: 600,
-      letterSpacing: '0.7px',
+      textTransform: 'none',
+      fontWeight: 500,
+      letterSpacing: '0.01em',
     },
   },
   shape: {
-    borderRadius: 4, // default for buttons/inputs
+    borderRadius: 12,
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
+          borderRadius: 8,
         },
         containedPrimary: {
           backgroundColor: designTokens.colors.primary,
@@ -96,8 +94,8 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
-          boxShadow: '0 2px 8px rgba(26,26,26,0.08)',
+          borderRadius: 12,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         },
       },
     },
@@ -105,6 +103,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          borderRadius: 12,
         },
       },
     },

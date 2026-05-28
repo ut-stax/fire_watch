@@ -1,13 +1,11 @@
-/**
- * File Upload Component
- * Handles CSV and JSON file uploads for bulk event ingestion
- */
-
 import { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import { addEvent } from '../../firebase/events';
 import { normalizeEvent, validateEvent } from '../../utils/normalizer';
-import { Paper, Typography, TextField, LinearProgress, Alert, Box, Button } from '@mui/material';
+import { Paper, Typography, LinearProgress, Alert, Box, Button } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { surfaceSx } from '../dashboard/dashboardStyles';
 
 export function FileUpload() {
   const [loading, setLoading] = useState(false);
@@ -75,7 +73,7 @@ export function FileUpload() {
                 const validation = validateEvent(normalizedEvent);
 
                 if (!validation.valid) {
-                  console.warn(`Row \${i + 1} validation failed:`, validation.errors);
+                  console.warn(`Row ${i + 1} validation failed:`, validation.errors);
                   continue;
                 }
 
@@ -86,7 +84,7 @@ export function FileUpload() {
                 // Update progress
                 setProgress(Math.round(((i + 1) / totalCount) * 100));
               } catch (rowError) {
-                console.warn(`Error processing row \${i + 1}:`, rowError);
+                console.warn(`Error processing row ${i + 1}:`, rowError);
               }
             }
 
@@ -97,7 +95,7 @@ export function FileUpload() {
             setSuccess({
               count: successCount,
               total: totalCount,
-              message: `Imported \${successCount} of \${totalCount} events successfully`,
+              message: `Imported ${successCount} of ${totalCount} events successfully`,
             });
 
             // Clear success message after 5 seconds
@@ -109,7 +107,7 @@ export function FileUpload() {
           }
         },
         error: (error) => {
-          reject(new Error(`CSV parsing error: \${error.message}`));
+          reject(new Error(`CSV parsing error: ${error.message}`));
         },
       });
     });
@@ -118,136 +116,150 @@ export function FileUpload() {
   const handleJSONFile = async (file) => {
     const fileContent = await file.text();
 
-    try {
-      const parsed = JSON.parse(fileContent);
+    const parsed = JSON.parse(fileContent);
 
-      // Handle both single object and array of objects
-      let events = Array.isArray(parsed) ? parsed : [parsed];
+    // Handle both single object and array of objects
+    let events = Array.isArray(parsed) ? parsed : [parsed];
 
-      if (events.length === 0) {
-        throw new Error('JSON file contains no events');
-      }
-
-      // Process each event
-      let successCount = 0;
-      const totalCount = events.length;
-
-      for (let i = 0; i < events.length; i++) {
-        try {
-          const event = events[i];
-
-          // Normalize and validate
-          const normalizedEvent = normalizeEvent(event);
-          const validation = validateEvent(normalizedEvent);
-
-          if (!validation.valid) {
-            console.warn(`Event \${i + 1} validation failed:`, validation.errors);
-            continue;
-          }
-
-          // Add to Firestore
-          await addEvent(normalizedEvent);
-          successCount++;
-
-          // Update progress
-          setProgress(Math.round(((i + 1) / totalCount) * 100));
-        } catch (eventError) {
-          console.warn(`Error processing event \${i + 1}:`, eventError);
-        }
-      }
-
-      if (successCount === 0) {
-        throw new Error('No valid events found in JSON file');
-      }
-
-      setSuccess({
-        count: successCount,
-        total: totalCount,
-        message: `Imported \${successCount} of \${totalCount} events successfully`,
-      });
-
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(null), 5000);
-    } catch (err) {
-      throw err;
+    if (events.length === 0) {
+      throw new Error('JSON file contains no events');
     }
+
+    // Process each event
+    let successCount = 0;
+    const totalCount = events.length;
+
+    for (let i = 0; i < events.length; i++) {
+      try {
+        const event = events[i];
+
+        // Normalize and validate
+        const normalizedEvent = normalizeEvent(event);
+        const validation = validateEvent(normalizedEvent);
+
+        if (!validation.valid) {
+          console.warn(`Event ${i + 1} validation failed:`, validation.errors);
+          continue;
+        }
+
+        // Add to Firestore
+        await addEvent(normalizedEvent);
+        successCount++;
+
+        // Update progress
+        setProgress(Math.round(((i + 1) / totalCount) * 100));
+      } catch (eventError) {
+        console.warn(`Error processing event ${i + 1}:`, eventError);
+      }
+    }
+
+    if (successCount === 0) {
+      throw new Error('No valid events found in JSON file');
+    }
+
+    setSuccess({
+      count: successCount,
+      total: totalCount,
+      message: `Imported ${successCount} of ${totalCount} events successfully`,
+    });
+
+    // Clear success message after 5 seconds
+    setTimeout(() => setSuccess(null), 5000);
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        File Upload
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Upload CSV or JSON files to import multiple events at once
+    <Paper sx={{ ...surfaceSx, p: 3, minWidth: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
+        <Box>
+          <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+            File Upload
+          </Typography>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 0.5 }}>
+            Upload CSV or JSON files to import multiple events at once
+          </Typography>
+        </Box>
+        <Box sx={{ width: 40, height: 40, borderRadius: '9999px', display: 'grid', placeItems: 'center', bgcolor: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}>
+          <CloudUploadIcon sx={{ fontSize: 20 }} />
+        </Box>
+      </Box>
+
+      <Typography sx={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', mb: 3 }}>
+        Bulk imports are normalized and validated row by row before they reach Firestore.
       </Typography>
 
-      {/* Success Message */}
       {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
+        <Alert severity="success" sx={{ mb: 3, borderRadius: '12px' }}>
           {success.message}
         </Alert>
       )}
 
-      {/* Error Message */}
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
           {error}
         </Alert>
       )}
 
-      {/* File Input */}
-      <Box sx={{ mb: 3 }}>
-        <Button
-          variant="contained"
-          component="label"
-          disabled={loading}
-        >
-          Choose File
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,.json"
-            onChange={handleFileSelect}
+      <Box sx={{ display: 'grid', gap: 3 }}>
+        <Box>
+          <Button
+            variant="contained"
+            component="label"
             disabled={loading}
-            hidden
-          />
-        </Button>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-          Supported formats: CSV (with headers), JSON (array or single object)
-        </Typography>
-      </Box>
-
-      {/* Progress Bar */}
-      {loading && progress > 0 && (
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-            <Typography variant="body2" color="text.secondary">Importing...</Typography>
-            <Typography variant="body2" sx={{ fontWeight: 500, color: 'primary.main' }}>{progress}%</Typography>
-          </Box>
-          <LinearProgress variant="determinate" value={progress} />
+            startIcon={<UploadFileIcon />}
+            sx={{
+              borderRadius: '10px',
+              textTransform: 'none',
+              fontWeight: 600,
+              bgcolor: 'var(--color-primary)',
+              color: 'var(--color-on-primary)',
+              minHeight: 48,
+              px: 2.5,
+              '&:hover': { bgcolor: 'var(--color-primary-dark)' },
+            }}
+          >
+            Choose File
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,.json"
+              onChange={handleFileSelect}
+              disabled={loading}
+              hidden
+            />
+          </Button>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mt: 1 }}>
+            Supported formats: CSV with headers, JSON array, or a single JSON object
+          </Typography>
         </Box>
-      )}
 
-      {/* Example CSV Format */}
-      <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          CSV Example:
-        </Typography>
-        <Box component="pre" sx={{ fontSize: '0.7rem', overflow: 'auto', bgcolor: 'grey.900', p: 1.5, borderRadius: 1 }}>
+        {loading && progress > 0 && (
+          <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>Importing...</Typography>
+              <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-primary)' }}>{progress}%</Typography>
+            </Box>
+            <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: '9999px', bgcolor: 'var(--color-neutral-plate)', '& .MuiLinearProgress-bar': { borderRadius: '9999px' } }} />
+          </Box>
+        )}
+
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          <Paper variant="outlined" sx={{ p: 2.5, borderRadius: '12px', borderColor: 'var(--color-border)', bgcolor: 'var(--color-row-hover)' }}>
+            <Typography sx={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--color-text-primary)', mb: 1 }}>
+              CSV Example
+            </Typography>
+            <Box component="pre" sx={{ m: 0, fontSize: '0.75rem', overflow: 'auto', bgcolor: 'var(--color-surface)', p: 1.5, borderRadius: '10px', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
 {`source_ip,dest_ip,event_type,severity,message
 192.168.1.100,,failed_login,high,Failed login from suspicious IP
 10.0.0.5,10.0.1.20,port_scan,high,Port scan detected
 203.0.113.10,,privilege_escalation,critical,Unauthorized sudo access`}
-        </Box>
-      </Paper>
+            </Box>
+          </Paper>
 
-      {/* Example JSON Format */}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          JSON Example:
-        </Typography>
-        <Box component="pre" sx={{ fontSize: '0.7rem', overflow: 'auto', bgcolor: 'grey.900', p: 1.5, borderRadius: 1 }}>
+          <Paper variant="outlined" sx={{ p: 2.5, borderRadius: '12px', borderColor: 'var(--color-border)', bgcolor: 'var(--color-row-hover)' }}>
+            <Typography sx={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--color-text-primary)', mb: 1 }}>
+              JSON Example
+            </Typography>
+            <Box component="pre" sx={{ m: 0, fontSize: '0.75rem', overflow: 'auto', bgcolor: 'var(--color-surface)', p: 1.5, borderRadius: '10px', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
 {`[
   {
     "source_ip": "192.168.1.100",
@@ -263,8 +275,10 @@ export function FileUpload() {
     "message": "Port scan detected"
   }
 ]`}
+            </Box>
+          </Paper>
         </Box>
-      </Paper>
+      </Box>
     </Paper>
   );
 }

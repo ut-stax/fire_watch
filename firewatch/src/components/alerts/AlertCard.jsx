@@ -1,11 +1,15 @@
-/**
- * Alert Card Component
- * Displays a single alert with severity badge, rule name, source IP, and acknowledge button
- */
-
 import { format } from 'date-fns';
 import { getSeverityChartColor, getSeverityLabel } from '../../utils/severityColors';
 import { Paper, Typography, Box, Button } from '@mui/material';
+import { surfaceSx } from '../dashboard/dashboardStyles';
+
+const severityBadgeStyles = {
+  critical: { bg: '#dc2626', fg: '#ffffff' },
+  high: { bg: '#ea580c', fg: '#ffffff' },
+  medium: { bg: '#b45309', fg: '#ffffff' },
+  low: { bg: '#15803d', fg: '#ffffff' },
+  info: { bg: '#0369a1', fg: '#ffffff' },
+};
 
 export function AlertCard({ alert, onSelect, onAcknowledge, isSelected = false }) {
   const handleAcknowledge = (e) => {
@@ -22,52 +26,60 @@ export function AlertCard({ alert, onSelect, onAcknowledge, isSelected = false }
     <Paper
       onClick={() => onSelect(alert)}
       sx={{
+        ...surfaceSx,
         p: 2,
-        borderLeft: 4,
-        borderColor: severityColor,
         cursor: 'pointer',
-        bgcolor: isSelected ? 'primary.soft' : 'background.paper',
-        borderRadius: 2,
-        boxShadow: '0 2px 8px rgba(26,26,26,0.06)',
-        transition: 'background-color 0.2s ease',
+        bgcolor: isSelected ? 'var(--color-neutral-plate)' : 'var(--color-surface)',
+        borderLeft: `4px solid ${severityColor}`,
+        transition: 'transform 160ms ease, background-color 160ms ease, border-color 160ms ease',
         '&:hover': {
-          bgcolor: 'primary.soft',
-          transform: 'translateY(-2px)'
+          bgcolor: 'var(--color-row-hover)',
+          transform: 'translateY(-1px)',
         },
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.5, flexWrap: 'wrap' }}>
             <Box
               sx={{
-                bgcolor: severityColor,
-                color: 'common.white',
+                bgcolor: severityBadgeStyles[alert.severity?.toLowerCase()]?.bg || severityColor,
+                color: severityBadgeStyles[alert.severity?.toLowerCase()]?.fg || 'common.white',
                 px: 1,
                 py: 0.5,
-                borderRadius: 1,
+                borderRadius: '9999px',
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: 700,
+                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)',
               }}
             >
               {getSeverityLabel(alert.severity)}
             </Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }} noWrap>
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-text-primary)' }} noWrap>
               {alert.rule_name}
             </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-            Source IP: <Box component="span" sx={{ fontFamily: 'monospace', color: 'text.primary' }}>{alert.source_ip}</Box>
+          <Typography sx={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', mb: 0.75 }}>
+            Source IP: <Box component="span" sx={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--color-text-primary)' }}>{alert.source_ip}</Box>
           </Typography>
-          <Typography variant="caption" color="text.disabled">
+          <Typography sx={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
             {format(alertTime, 'MMM dd, HH:mm:ss')}
           </Typography>
         </Box>
         <Button
           onClick={handleAcknowledge}
-          variant="outlined"
+          variant="contained"
           size="small"
-          sx={{ whiteSpace: 'nowrap' }}
+          sx={{
+            whiteSpace: 'nowrap',
+            minWidth: 0,
+            textTransform: 'none',
+            borderRadius: '8px',
+            bgcolor: 'var(--color-primary)',
+            color: 'var(--color-on-primary)',
+            boxShadow: 'none',
+            '&:hover': { bgcolor: 'var(--color-primary-dark)', boxShadow: 'none' },
+          }}
         >
           Acknowledge
         </Button>

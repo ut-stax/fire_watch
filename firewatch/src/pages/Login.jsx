@@ -1,29 +1,21 @@
-/**
- * Login Page
- * Authentication page with Google and email/password sign-in options
- */
-
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { signInWithGoogle, signInWithEmail } from '../firebase/auth';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { signInWithEmail, signInWithGoogle } from '../firebase/auth';
 import { useAuth } from '../hooks/useAuth.jsx';
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-  Alert,
-  Divider,
-  Container,
-} from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
+import { Alert, Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { AuthSplitLayout } from '../components/auth/AuthSplitLayout';
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -31,6 +23,15 @@ export default function Login() {
     navigate('/app');
     return null;
   }
+
+  const validate = () => {
+    const nextErrors = {};
+    if (!email) nextErrors.email = 'Email is required.';
+    else if (!emailPattern.test(email)) nextErrors.email = 'Enter a valid email address.';
+    if (!password) nextErrors.password = 'Password is required.';
+    setFieldErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -45,137 +46,139 @@ export default function Login() {
     }
   };
 
-  const handleEmailSignIn = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError('');
+    if (!validate()) return;
     setLoading(true);
-
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      setLoading(false);
-      return;
-    }
 
     try {
       await signInWithEmail(email, password);
       navigate('/app');
     } catch (err) {
-      if (err.code === 'auth/user-not-found') {
-        setError('User not found. Please check your email.');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Incorrect password. Please try again.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address.');
-      } else {
-        setError(err.message || 'Failed to sign in');
-      }
+      if (err.code === 'auth/user-not-found') setError('User not found. Please check your email.');
+      else if (err.code === 'auth/wrong-password') setError('Incorrect password. Please try again.');
+      else if (err.code === 'auth/invalid-email') setError('Invalid email address.');
+      else setError(err.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        p: 2,
-      }}
+    <AuthSplitLayout
+      title="Welcome back"
+      subtitle="Pick up right where you left off and get back into your FireWatch workspace in under 60 seconds."
+      googleLabel="Continue with Google"
+      onGoogle={handleGoogleSignIn}
+      onSubmit={handleSubmit}
+      submitLabel="Sign In"
+      loadingLabel="Signing in..."
+      loading={loading}
+      switchText="Don't have an account?"
+      switchLinkText="Create one"
+      switchTo="/signup"
     >
-      <Container maxWidth="sm">
-        <Paper sx={{ p: 4 }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
-              FireWatch
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Security Information & Event Management
-            </Typography>
-          </Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2, borderRadius: '8px' }}>
+          {error}
+        </Alert>
+      )}
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
+      <Box sx={{ position: 'relative', mb: 2 }}>
+        <TextField
+          id="login-email"
+          type="email"
+          label="Email address"
+          value={email}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            if (fieldErrors.email) setFieldErrors((current) => ({ ...current, email: '' }));
+          }}
+          disabled={loading}
+          fullWidth
+          required
+          autoComplete="email"
+          placeholder="you@example.com"
+          error={Boolean(fieldErrors.email)}
+          helperText={fieldErrors.email || ' '}
+          sx={{
+            '& .MuiInputBase-root': {
+              minHeight: 48,
+              borderRadius: '8px',
+              backgroundColor: '#ffffff',
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#9ca3af' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#024ad8',
+                boxShadow: '0 0 0 3px rgba(2,74,216,0.15)',
+              },
+            },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e5e7eb' },
+            '& .MuiInputBase-input': { py: 1.5 },
+            '& .MuiFormHelperText-root': { mx: 0, mt: 0.75, fontSize: '0.74rem' },
+          }}
+        />
+      </Box>
 
-          <Button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            variant="outlined"
-            fullWidth
-            size="large"
-            startIcon={<GoogleIcon />}
-            sx={{ mb: 3, py: 1.5 }}
+      <Box sx={{ position: 'relative', mb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 0.8 }}>
+          <Box
+            component="a"
+            href="mailto:support@firewatch.app"
+            sx={{ fontSize: '0.82rem', color: '#024ad8', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
           >
-            Sign in with Google
-          </Button>
-
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              Or sign in with email
-            </Typography>
-          </Divider>
-
-          <Box component="form" onSubmit={handleEmailSignIn}>
-            <TextField
-              label="Email Address"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              fullWidth
-              margin="normal"
-              required
-              autoComplete="email"
-              placeholder="you@example.com"
-            />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              fullWidth
-              margin="normal"
-              required
-              autoComplete="current-password"
-              placeholder="••••••••"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="large"
-              disabled={loading}
-              sx={{ mt: 2, py: 1.5 }}
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
+            Forgot password?
           </Box>
-
-          <Alert severity="info" sx={{ mt: 3 }}>
-            <Typography variant="caption" fontWeight={600} display="block" gutterBottom>
-              Demo Credentials:
-            </Typography>
-            <Typography variant="caption" display="block">
-              Email: demo@firewatch.com
-            </Typography>
-            <Typography variant="caption" display="block">
-              Password: Demo123!
-            </Typography>
-          </Alert>
-
-          <Box sx={{ mt: 2, textAlign: 'center' }}>
-            <Typography variant="body2">
-              Don't have an account? <Link to="/signup">Create one</Link>
-            </Typography>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+        </Box>
+        <TextField
+          id="login-password"
+          type={showPassword ? 'text' : 'password'}
+          label="Password"
+          value={password}
+          onChange={(event) => {
+            setPassword(event.target.value);
+            if (fieldErrors.password) setFieldErrors((current) => ({ ...current, password: '' }));
+          }}
+          disabled={loading}
+          fullWidth
+          required
+          autoComplete="current-password"
+          placeholder="••••••••"
+          error={Boolean(fieldErrors.password)}
+          helperText={fieldErrors.password || ' '}
+          slotProps={{
+            input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword((current) => !current)}
+                  edge="end"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  sx={{ color: '#6b7280' }}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+            },
+          }}
+          sx={{
+            '& .MuiInputBase-root': {
+              minHeight: 48,
+              borderRadius: '8px',
+              backgroundColor: '#ffffff',
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#9ca3af' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#024ad8',
+                boxShadow: '0 0 0 3px rgba(2,74,216,0.15)',
+              },
+            },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e5e7eb' },
+            '& .MuiInputBase-input': { py: 1.5 },
+            '& .MuiFormHelperText-root': { mx: 0, mt: 0.75, fontSize: '0.74rem' },
+          }}
+        />
+      </Box>
+    </AuthSplitLayout>
   );
 }
