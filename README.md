@@ -1,6 +1,11 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/firewatch-siem/firewatch/main/public/logo.svg](https://chatgpt.com/backend-api/estuary/content?id=file_000000005cf47230ab591200d8318845&ts=494431&p=fs&cid=1&sig=2ef0f1340d916bf6c0106fcfef484d9bad9d22317c0cbebf7a48035b0357b96c&v=0)" alt="FireWatch SIEM" width="120" height="120">
+<img 
+  src="./fire_watch/71460285-a9b1-4b44-8d5f-6848d11b102e.png" 
+  alt="FireWatch SIEM" 
+  width="120" 
+  height="120"
+/>
 
 # FireWatch SIEM
 
